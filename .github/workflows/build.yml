@@ -38,7 +38,7 @@ jobs:
       - name: Install Node
         uses: actions/setup-node@v3
         with:
-          node-version: 'lts'
+          node-version: 'latest'
       - name: Run Build
         run: npm ci && npm run make
 
