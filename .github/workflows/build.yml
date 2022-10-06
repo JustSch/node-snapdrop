@@ -45,4 +45,5 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: /out
+          
         if: startsWith(github.ref, 'refs/tags/')
