@@ -35,26 +35,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Run Linux Build
+      - name: Install Node
         uses: actions/setup-node@v3
         with:
           node-version: 'lts'
+      - name: Run Build
         run: npm ci && npm run make
-        if: matrix.os == 'ubuntu-latest'
-
-      - name: Run Windows Build
-        uses: actions/setup-node@v3
-        with:
-          node-version: 'lts'
-        run: npm ci && npm run make
-        if: matrix.os == 'windows-latest'
-
-      - name: Run macos Build
-        uses: actions/setup-node@v3
-        with:
-          node-version: 'lts'
-        run: npm ci && npm run make
-        if: matrix.os == 'macos-latest'
 
       - name: Release
         uses: softprops/action-gh-release@v1
