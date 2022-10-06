@@ -2,13 +2,22 @@ window.onload = () => {
     if (isElectron) {
         let text= document.getElementById("snap-text");
         //So far is not accurate and attempts to get ip address on every run
-        text.innerHTML = "Connect to <div id=\"ip-text\">Local-ip:3000</div> on your other devices";
+        let switchtext = document.getElementById("switch");
 
         fetch('/ip').then((res) => {
             return res.json();
         }).then((data) => {
-            console.log(Object.values(data).flat()); //be able to switch between these if more than one
-            //generate text string and have onclick listener to replace ip-text to switch between
+            let ipaddr = Object.values(data).flat();         
+            let x = 0;
+            text.innerHTML = `Connect to <div id=\"ip-text\">${ipaddr[0]}:3000</div> on your other devices`;
+            switchtext.addEventListener("click",((e) => {
+                e.preventDefault();
+                if (x === ipaddr.length -1) x = 0;
+                else x+=1;
+                let iptext = document.getElementById("ip-text");
+                iptext.innerText = `${ipaddr[x]}:3000`;
+                console.log(ipaddr[x]);
+            }));
         });
     }
     function isElectron() {

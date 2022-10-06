@@ -14,7 +14,7 @@ function createWindow () {
     }
   })
 
-  mainWindow.loadURL('http://localhost:3000')  //ADD THIS
+  mainWindow.loadURL('http://localhost:3000') 
   mainWindow.on('closed', function () {
     mainWindow = null
   })

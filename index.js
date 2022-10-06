@@ -59,17 +59,16 @@ for (const name of Object.keys(nets)) {
     }
 }
 
-var ip = require('ip');
 
-app.get('/ip', (req, res) => {
-    console.log(results);
+
+app.get('/ip', (_req, res) => {
     res.json(results);
 });
-app.use(function(req, res) {
+app.use(function(_req, res) {
     res.redirect('/');
 });
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
 	res.sendFile('index.html');
 });
 
