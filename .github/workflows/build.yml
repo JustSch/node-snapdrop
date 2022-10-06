@@ -1,6 +1,9 @@
 name: Build Release
 
-on: push
+on:
+  push:
+    tags:
+      - "v*.*.*"
 
 jobs:
   create_release:
@@ -59,4 +62,4 @@ jobs:
           tag_name: ${{ needs.create_release.outputs.tag-name }}
           files: /out
 
-        if: startsWith(github.ref, 'refs/tags/')
+        
