@@ -26,25 +26,43 @@ process.on('unhandledRejection', (reason, promise) => {
 })
 
 const express = require('express');
-const RateLimit = require('express-rate-limit');
 const http = require('http');
-
-const limiter = RateLimit({
-	windowMs: 5 * 60 * 1000, // 5 minutes
-	max: 100, // Limit each IP to 100 requests per `window` (here, per 5 minutes)
-	message: 'Too many requests from this IP Address, please try again after 5 minutes.',
-	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-})
-
 const app = express();
 const port = process.env.PORT || 3000;
-const publicRun = process.argv[2];
+var lan;
+if (typeof process.argv[2] === 'string' || process.argv[2] instanceof String) {
+    lan = process.argv[2];
+} else {
+    lan = '';
+}
+lan = lan.toLowerCase();
 
-app.use(limiter);
 
 app.use(express.static('public'));
 
+
+/* const { networkInterfaces } = require('os');
+
+const nets = networkInterfaces();
+const results = Object.create(null); // Or just '{}', an empty object
+
+for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+        // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
+        // 'IPv4' is in Node <= 17, from 18 it's a number 4 or 6
+        const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4
+        if (net.family === familyV4Value && !net.internal) {
+            if (!results[name]) {
+                results[name] = [];
+            }
+            results[name].push(net.address);
+        }
+    }
+}
+app.get('/ip', (req, res) => {
+    console.log(results);
+    res.send(req.ip);
+}); */
 app.use(function(req, res) {
     res.redirect('/');
 });
@@ -53,11 +71,12 @@ app.get('/', (req, res) => {
 	res.sendFile('index.html');
 });
 
+
 const server = http.createServer(app);
-(!publicRun == "public") ? server.listen(port) : server.listen(port, '0.0.0.0');
+server.listen(port);
 
 const parser = require('ua-parser-js');
-const { uniqueNamesGenerator, animals, colors } = require('unique-names-generator');
+const { uniqueNamesGenerator, colors, animals, names } = require('unique-names-generator');
 
 class SnapdropServer {
 
@@ -69,7 +88,7 @@ class SnapdropServer {
 
         this._rooms = {};
 
-        console.log('Snapdrop is running on port', port);
+        console.log('node-Snapdrop is running on port', port);
     }
 
     _onConnection(peer) {
@@ -109,11 +128,18 @@ class SnapdropServer {
                 sender.lastBeat = Date.now();
                 break;
         }
+	
+	var senderIp = '';
+	if (lan == 'lan') {
+            senderIp = 'LAN';
+	} else {
+	    senderIp = sender.ip;
+	}
 
         // relay message to recipient
-        if (message.to && this._rooms[sender.ip]) {
+        if (message.to && this._rooms[senderIp]) {
             const recipientId = message.to; // TODO: sanitize
-            const recipient = this._rooms[sender.ip][recipientId];
+            const recipient = this._rooms[senderIp][recipientId];
             delete message.to;
             // add sender id
             message.sender = sender.id;
@@ -123,14 +149,20 @@ class SnapdropServer {
     }
 
     _joinRoom(peer) {
+	var peerIp = "";
+	if (lan == 'lan') {
+            peerIp = 'LAN';
+	} else {
+	    peerIp = peer.ip;
+	}
         // if room doesn't exist, create it
-        if (!this._rooms[peer.ip]) {
-            this._rooms[peer.ip] = {};
+        if (!this._rooms[peerIp]) {
+            this._rooms[peerIp] = {};
         }
 
         // notify all other peers
-        for (const otherPeerId in this._rooms[peer.ip]) {
-            const otherPeer = this._rooms[peer.ip][otherPeerId];
+        for (const otherPeerId in this._rooms[peerIp]) {
+            const otherPeer = this._rooms[peerIp][otherPeerId];
             this._send(otherPeer, {
                 type: 'peer-joined',
                 peer: peer.getInfo()
@@ -139,8 +171,10 @@ class SnapdropServer {
 
         // notify peer about the other peers
         const otherPeers = [];
-        for (const otherPeerId in this._rooms[peer.ip]) {
-            otherPeers.push(this._rooms[peer.ip][otherPeerId].getInfo());
+        for (const otherPeerId in this._rooms[peerIp]) {
+	    var ipeer = this._rooms[peerIp][otherPeerId].getInfo();
+	    ipeer["ip"] = this._rooms[peerIp][otherPeerId].ip;
+            otherPeers.push(ipeer);
         }
 
         this._send(peer, {
@@ -149,24 +183,30 @@ class SnapdropServer {
         });
 
         // add peer to room
-        this._rooms[peer.ip][peer.id] = peer;
+        this._rooms[peerIp][peer.id] = peer;
     }
 
     _leaveRoom(peer) {
-        if (!this._rooms[peer.ip] || !this._rooms[peer.ip][peer.id]) return;
-        this._cancelKeepAlive(this._rooms[peer.ip][peer.id]);
+	var peerIp = '';
+	if (lan == 'lan') {
+	    peerIp = 'LAN';
+	} else {
+	    peerIp = peer.ip;
+	}
+        if (!this._rooms[peerIp] || !this._rooms[peerIp][peer.id]) return;
+        this._cancelKeepAlive(this._rooms[peerIp][peer.id]);
 
         // delete the peer
-        delete this._rooms[peer.ip][peer.id];
+        delete this._rooms[peerIp][peer.id];
 
         peer.socket.terminate();
         //if room is empty, delete the room
-        if (!Object.keys(this._rooms[peer.ip]).length) {
-            delete this._rooms[peer.ip];
+        if (!Object.keys(this._rooms[peerIp]).length) {
+            delete this._rooms[peerIp];
         } else {
             // notify all other peers
-            for (const otherPeerId in this._rooms[peer.ip]) {
-                const otherPeer = this._rooms[peer.ip][otherPeerId];
+            for (const otherPeerId in this._rooms[peerIp]) {
+                const otherPeer = this._rooms[peerIp][otherPeerId];
                 this._send(otherPeer, { type: 'peer-left', peerId: peer.id });
             }
         }
@@ -269,9 +309,9 @@ class Peer {
             deviceName = 'Unknown Device';
 
         const displayName = uniqueNamesGenerator({
-            length: 2,
+            length: 3,
             separator: ' ',
-            dictionaries: [colors, animals],
+            dictionaries: [colors, animals, names],
             style: 'capital',
             seed: this.id.hashCode()
         })
