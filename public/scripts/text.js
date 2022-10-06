@@ -1,13 +1,14 @@
 window.onload = () => {
     if (isElectron) {
         let text= document.getElementById("snap-text");
-        //get ip address (either get on initial load and make/readfile or broadcast it)
-        //(may be able to ping something and get local ip via webrtc)
+        //So far is not accurate and attempts to get ip address on every run
         text.innerText = "Connect to Local-ip:3000 on your other devices";
 
-        /* fetch('/ip').then((res) => {
-            //console.log(res.text);
-        }) */
+        fetch('/ip').then((res) => {
+            return res.json();
+        }).then((data) => {
+            console.log(Object.values(data).flat()); //be able to switch between these if more than one
+        });
     }
     function isElectron() {
     
