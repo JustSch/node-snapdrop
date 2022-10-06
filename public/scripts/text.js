@@ -16,7 +16,6 @@ window.onload = () => {
                 else x+=1;
                 let iptext = document.getElementById("ip-text");
                 iptext.innerText = `http://${ipaddr[x]}:3000`;
-                console.log(ipaddr[x]);
             }));
         });
     }
