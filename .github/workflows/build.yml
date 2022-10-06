@@ -61,5 +61,3 @@ jobs:
         with:
           tag_name: ${{ needs.create_release.outputs.tag-name }}
           files: /out
-
-        
