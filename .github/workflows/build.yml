@@ -3,6 +3,18 @@ name: Build Release
 on: push
 
 jobs:
+  create_release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          generate_release_notes: false
   build:
     name: "Build Release"
     strategy:
@@ -44,6 +56,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ needs.create_release.outputs.tag-name }}
           files: /out
-          
+
         if: startsWith(github.ref, 'refs/tags/')
