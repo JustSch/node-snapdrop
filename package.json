@@ -30,7 +30,9 @@
   },
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "icon": "./public/images/android-chrome-512x512"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
@@ -46,7 +48,11 @@
         },
         {
           "name": "@electron-forge/maker-deb",
-          "config": {}
+          "config": {
+            "options": {
+              "icon": "./public/images/android-chrome-512x512.png"
+            }
+          }
         },
         {
           "name": "@electron-forge/maker-rpm",
