@@ -2,7 +2,7 @@
   "name": "snapdrop",
   "private": true,
   "version": "1.0.0",
-  "description": "local file sharing. Inspired by Apple's Airdrop",
+  "description": "Local file sharing. Inspired by Apple's Airdrop",
   "main": "main.js",
   "scripts": {
     "start": "electron-forge start",

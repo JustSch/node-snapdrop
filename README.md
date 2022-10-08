@@ -1,5 +1,8 @@
 # node-snapdrop-electron
-Just the original [Snapdrop](https://github.com/RobinLinus/Snapdrop), with complete Node.js server and as an Electron App.
+
+Local file sharing. Inspired by Apple's Airdrop.
+
+
 
 ## Build Yourself
 
@@ -12,5 +15,7 @@ npm run make
 ```
 
 
-## Uses LAN fix from https://github.com/DrBassman/node-snapdrop/
+Just the original [Snapdrop](https://github.com/RobinLinus/Snapdrop), with complete Node.js server and as an Electron App.
+
+Uses LAN fix from https://github.com/DrBassman/node-snapdrop/
 
