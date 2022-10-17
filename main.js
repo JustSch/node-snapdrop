@@ -14,7 +14,7 @@ function createWindow () {
     }
   })
   mainWindow.setIcon(__dirname + '/public/images/favicon-96x96.png');
-  mainWindow.loadURL('http://localhost:3000/');
+  mainWindow.loadURL('http://localhost:3001/');
   mainWindow.on('closed', function () {
     mainWindow = null
   })

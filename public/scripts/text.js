@@ -1,7 +1,6 @@
 window.onload = () => {
     if (isElectron) {
         let text= document.getElementById("snap-text");
-        //So far is not accurate and attempts to get ip address on every run
         let switchtext = document.getElementById("switch");
 
         fetch('/ip').then((res) => {
@@ -9,13 +8,13 @@ window.onload = () => {
         }).then((data) => {
             let ipaddr = Object.values(data).flat();         
             let x = 0;
-            text.innerHTML = `Connect to <div id=\"ip-text\">http://${ipaddr[0]}:3000</div> on your other devices`;
+            text.innerHTML = `Connect to <div id=\"ip-text\">http://${ipaddr[0]}:3001</div> on your other devices`;
             switchtext.addEventListener("click",((e) => {
                 e.preventDefault();
                 if (x === ipaddr.length -1) x = 0;
                 else x+=1;
                 let iptext = document.getElementById("ip-text");
-                iptext.innerText = `http://${ipaddr[x]}:3000`;
+                iptext.innerText = `http://${ipaddr[x]}:3001`;
             }));
         });
     }

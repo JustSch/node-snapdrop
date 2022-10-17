@@ -39,9 +39,16 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 'latest'
+          cache: "npm"
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
       - name: Run Build
         run: npm ci && npm run make
-
+        
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
