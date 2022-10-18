@@ -26,6 +26,7 @@
     "@electron-forge/maker-rpm": "^6.0.0-beta.67",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.67",
     "@electron-forge/maker-zip": "^6.0.0-beta.67",
+    "@reforged/maker-appimage": "^1.2.1",
     "electron": "^21.1.0"
   },
   "config": {
@@ -59,6 +60,21 @@
           "config": {
             "options": {
               "icon": "./public/images/android-chrome-512x512.png"
+            }
+          }
+        },
+        {
+          "name": "@reforged/maker-appimage",
+          "config": {
+            "options": {
+              "name": "snapdrop",
+              "productName": "snapdrop",
+              "genericName": "snapdrop",
+              "icon": "./public/images/android-chrome-512x512.png",
+              "categories": [
+                "Utility"
+              ],
+              "AppImageKitRelease": 12
             }
           }
         }
