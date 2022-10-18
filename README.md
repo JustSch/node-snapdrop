@@ -5,7 +5,7 @@ Local file sharing. Inspired by Apple's Airdrop.
 Download the latest [release](https://github.com/JustSch/node-snapdrop-electron/releases/latest)
 
 #
-### Or Build It Yourself
+### Build It Yourself
 
 ```bash
 npm install
