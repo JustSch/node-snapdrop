@@ -16,7 +16,7 @@ npm run make
 ```
 #
 
-Just the original [Snapdrop](https://github.com/RobinLinus/Snapdrop), as a self-contained Electron App.
+Just the original [Snapdrop](https://github.com/RobinLinus/Snapdrop), as a self-contained Electron Desktop App.
 
 Based on [Bellisario's nodejs version](https://github.com/Bellisario/node-snapdrop)
 
