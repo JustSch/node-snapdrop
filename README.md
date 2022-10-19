@@ -20,5 +20,5 @@ Just the original [Snapdrop](https://github.com/RobinLinus/Snapdrop), as a self-
 
 Based on [Bellisario's nodejs version](https://github.com/Bellisario/node-snapdrop)
 
-Uses LAN fix from https://github.com/DrBassman/node-snapdrop/
+Includes LAN fix from https://github.com/DrBassman/node-snapdrop/
 
