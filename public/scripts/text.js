@@ -8,7 +8,7 @@ window.onload = () => {
         }).then((data) => {
             let ipaddr = Object.values(data).flat();         
             let x = 0;
-            text.innerHTML = `Connect to <div id=\"ip-text\">http://${ipaddr[0]}:3001</div> on your other devices`;
+            text.innerHTML = `Use a browser to go to <div id=\"ip-text\">http://${ipaddr[0]}:3001</div> on your other devices`;
             switchtext.addEventListener("click",((e) => {
                 e.preventDefault();
                 if (x === ipaddr.length -1) x = 0;
