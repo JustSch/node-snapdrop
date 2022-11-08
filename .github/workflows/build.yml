@@ -13,6 +13,9 @@ jobs:
       - name: Create Release
         id: create_release
         uses: shogo82148/actions-create-release@v1
+      - name: Set Url
+        id: set-url
+        run: echo "URL=" >> $GITHUB_OUTPUT
   build:
     name: "Build Release"
     strategy:
@@ -47,5 +50,5 @@ jobs:
       - name: Release
         uses: shogo82148/actions-upload-release-asset@v1
         with:
-          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          upload_url: ${{ github.event.release.upload_url }}
           asset_path: out/make/**
