@@ -13,8 +13,6 @@ jobs:
       - name: Create Release
         id: create_release
         uses: shogo82148/actions-create-release@v1
-      - name: Print Outputs
-        run: echo ${{ steps.create_release.outputs.upload_url }}
   build:
     name: "Build Release"
     strategy:
@@ -29,6 +27,9 @@ jobs:
             release_suffix: windows
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Check upload_url
+        if: ${{ needs.create_release.outputs.upload_url == '' }}
+        run: exit 1 
       - name: Checkout
         uses: actions/checkout@v3
 
