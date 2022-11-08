@@ -32,9 +32,6 @@ jobs:
             release_suffix: windows
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Check upload_url
-        if: ${{ needs.create_release.outputs.upload_url == '' }}
-        run: echo "url not properly passed by previous job" && exit 1 
       - name: Checkout
         uses: actions/checkout@v3
 
