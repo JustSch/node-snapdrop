@@ -14,7 +14,7 @@ jobs:
         id: create_release
         uses: shogo82148/actions-create-release@v1
       - name: Print Outputs
-        run: echo {$steps.create_release.outputs}
+        run: echo ${{ steps.create_release.outputs }}
   build:
     name: "Build Release"
     strategy:
