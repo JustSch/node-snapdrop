@@ -28,7 +28,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Check upload_url
-        if: ${{ needs.create_release.outputs.upload_url == '' }}
+        if: ${{ needs.create_release.steps.create_release.outputs.upload_url == '' }}
         run: echo "url not properly passed by previous job" && exit 1 
       - name: Checkout
         uses: actions/checkout@v3
@@ -50,5 +50,5 @@ jobs:
       - name: Release
         uses: shogo82148/actions-upload-release-asset@v1
         with:
-          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          upload_url: ${{ needs.create_release.steps.create_release.outputs.upload_url }}
           asset_path: out/make/**
