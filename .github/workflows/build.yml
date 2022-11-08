@@ -6,7 +6,7 @@ on:
       - "v*.*.*"
 
 jobs:
-  creating_release:
+  create_release:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
@@ -47,5 +47,5 @@ jobs:
       - name: Release
         uses: shogo82148/actions-upload-release-asset@v1
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
           asset_path: out/make/**
