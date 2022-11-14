@@ -50,7 +50,7 @@ jobs:
         run: npm ci && npm run make
         
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: JustSch/action-gh-release@1.0
         with:
           tag_name: ${{ needs.create_release.outputs.tag-name }}
           files: out/make/**
