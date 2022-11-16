@@ -1,4 +1,4 @@
-# node-snapdrop-electron
+# Snapdrop For Desktop
 
 Local file sharing. Inspired by Apple's Airdrop.
 
