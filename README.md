@@ -4,6 +4,9 @@ Local file sharing. Inspired by Apple's Airdrop.
 
 Download the latest [release](https://github.com/JustSch/node-snapdrop-electron/releases/latest)
 
+Note: Mac OS Version is named snapdrop-darwin-x64-x.x.x.zip
+
+
 #
 ### Build It Yourself
 
