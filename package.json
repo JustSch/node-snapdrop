@@ -38,21 +38,26 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "snapdrop"
+            "name": "snapdrop",
+            "setupIcon": "./public/images/android-chrome-512x512.ico"
           }
         },
         {
           "name": "@electron-forge/maker-zip",
           "platforms": [
             "darwin",
-            "win32"
+            "win32",
+            "linux"
           ]
         },
         {
           "name": "@electron-forge/maker-deb",
           "config": {
             "options": {
-              "icon": "./public/images/android-chrome-512x512.png"
+              "icon": "./public/images/android-chrome-512x512.png",
+              "categories": [
+                "Utility"
+              ]
             }
           }
         },
@@ -60,7 +65,10 @@
           "name": "@electron-forge/maker-rpm",
           "config": {
             "options": {
-              "icon": "./public/images/android-chrome-512x512.png"
+              "icon": "./public/images/android-chrome-512x512.png",
+              "categories": [
+                "Utility"
+              ]
             }
           }
         },
