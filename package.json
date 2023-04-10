@@ -25,7 +25,7 @@
     "@electron-forge/maker-deb": "^6.0.5",
     "@electron-forge/maker-rpm": "^6.0.5",
     "@electron-forge/maker-squirrel": "^6.0.5",
-    "@electron-forge/maker-zip": "^6.0.5",
+    "@electron-forge/maker-zip": "^6.1.1",
     "@reforged/maker-appimage": "^3.1.8",
     "electron": "^23.1.3"
   },
