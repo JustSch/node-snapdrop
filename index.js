@@ -30,42 +30,35 @@ function main() {
     const http = require('http');
     const app = express();
     const port = process.env.PORT || 3001;
-    const lan = "lan";
+    var lan = "lan";
 
-    let givenIP = process.argv[2]
-    app.use(express.static(__dirname + '/public'));
+
+    app.use(express.static(__dirname +'/public'));
+
+    const { networkInterfaces } = require('os');
+
+    const nets = networkInterfaces();
     const results = Object.create(null); // Or just '{}', an empty object
-    if (givenIP) {
-        results['givenip'] = [givenIP];
 
-    }
-    else {
-        const { networkInterfaces } = require('os');
-
-        const nets = networkInterfaces();
-        
-
-        for (const name of Object.keys(nets)) {
-            for (const net of nets[name]) {
-                // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
-                // 'IPv4' is in Node <= 17, from 18 it's a number 4 or 6
-                const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4
-                if (net.family === familyV4Value && !net.internal) {
-                    if (!results[name]) {
-                        results[name] = [];
-                    }
-                    results[name].push(net.address);
+    for (const name of Object.keys(nets)) {
+        for (const net of nets[name]) {
+            // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
+            // 'IPv4' is in Node <= 17, from 18 it's a number 4 or 6
+            const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4
+            if (net.family === familyV4Value && !net.internal) {
+                if (!results[name]) {
+                    results[name] = [];
                 }
+                results[name].push(net.address);
             }
         }
     }
 
 
-
     app.get('/ip', (_req, res) => {
         res.json(results);
     });
-
+  
 
     app.get('/', (_req, res) => {
         res.sendFile(__dirname + '/index.html');
@@ -73,18 +66,7 @@ function main() {
 
 
     const server = http.createServer(app);
-
-
-    //can set ip to bind to manually here
-
-    if (givenIP) {
-        server.listen(port, givenIP, () => { console.log(`node-Snapdrop is running on: http://${server.address().address}:${server.address().port}`); });
-
-    }
-    else {
-        server.listen(port, () => { console.log('node-Snapdrop is running on port', server.address().port); });
-
-    }
+    server.listen(port);
 
     const parser = require('ua-parser-js');
     const { uniqueNamesGenerator, colors, animals, names } = require('unique-names-generator');
@@ -96,17 +78,17 @@ function main() {
             this._wss = new WebSocket.Server({ server });
             this._wss.on('connection', (socket, request) => this._onConnection(new Peer(socket, request)));
             this._wss.on('headers', (headers, response) => this._onHeaders(headers, response));
-
+    
             this._rooms = {};
-
-
+    
+            console.log('node-Snapdrop is running on port', port);
         }
-
+    
         _onConnection(peer) {
             this._joinRoom(peer);
             peer.socket.on('message', message => this._onMessage(peer, message));
             this._keepAlive(peer);
-
+    
             // send displayName
             this._send(peer, {
                 type: 'display-name',
@@ -116,13 +98,13 @@ function main() {
                 }
             });
         }
-
+    
         _onHeaders(headers, response) {
             if (response.headers.cookie && response.headers.cookie.indexOf('peerid=') > -1) return;
             response.peerId = Peer.uuid();
             headers.push('Set-Cookie: peerid=' + response.peerId + "; SameSite=Strict; Secure");
         }
-
+    
         _onMessage(sender, message) {
             // Try to parse message 
             try {
@@ -130,7 +112,7 @@ function main() {
             } catch (e) {
                 return; // TODO: handle malformed JSON
             }
-
+    
             switch (message.type) {
                 case 'disconnect':
                     this._leaveRoom(sender);
@@ -139,14 +121,14 @@ function main() {
                     sender.lastBeat = Date.now();
                     break;
             }
-
+    
             var senderIp = '';
             if (lan == 'lan') {
                 senderIp = 'LAN';
             } else {
                 senderIp = sender.ip;
             }
-
+    
             // relay message to recipient
             if (message.to && this._rooms[senderIp]) {
                 const recipientId = message.to; // TODO: sanitize
@@ -158,7 +140,7 @@ function main() {
                 return;
             }
         }
-
+    
         _joinRoom(peer) {
             var peerIp = "";
             if (lan == 'lan') {
@@ -170,7 +152,7 @@ function main() {
             if (!this._rooms[peerIp]) {
                 this._rooms[peerIp] = {};
             }
-
+    
             // notify all other peers
             for (const otherPeerId in this._rooms[peerIp]) {
                 const otherPeer = this._rooms[peerIp][otherPeerId];
@@ -179,7 +161,7 @@ function main() {
                     peer: peer.getInfo()
                 });
             }
-
+    
             // notify peer about the other peers
             const otherPeers = [];
             for (const otherPeerId in this._rooms[peerIp]) {
@@ -187,16 +169,16 @@ function main() {
                 ipeer["ip"] = this._rooms[peerIp][otherPeerId].ip;
                 otherPeers.push(ipeer);
             }
-
+    
             this._send(peer, {
                 type: 'peers',
                 peers: otherPeers
             });
-
+    
             // add peer to room
             this._rooms[peerIp][peer.id] = peer;
         }
-
+    
         _leaveRoom(peer) {
             var peerIp = '';
             if (lan == 'lan') {
@@ -206,10 +188,10 @@ function main() {
             }
             if (!this._rooms[peerIp] || !this._rooms[peerIp][peer.id]) return;
             this._cancelKeepAlive(this._rooms[peerIp][peer.id]);
-
+    
             // delete the peer
             delete this._rooms[peerIp][peer.id];
-
+    
             peer.socket.terminate();
             //if room is empty, delete the room
             if (!Object.keys(this._rooms[peerIp]).length) {
@@ -222,14 +204,14 @@ function main() {
                 }
             }
         }
-
+    
         _send(peer, message) {
             if (!peer) return;
             if (this._wss.readyState !== this._wss.OPEN) return;
             message = JSON.stringify(message);
             peer.socket.send(message, error => '');
         }
-
+    
         _keepAlive(peer) {
             this._cancelKeepAlive(peer);
             var timeout = 30000;
@@ -240,31 +222,31 @@ function main() {
                 this._leaveRoom(peer);
                 return;
             }
-
+    
             this._send(peer, { type: 'ping' });
-
+    
             peer.timerId = setTimeout(() => this._keepAlive(peer), timeout);
         }
-
+    
         _cancelKeepAlive(peer) {
             if (peer && peer.timerId) {
                 clearTimeout(peer.timerId);
             }
         }
     }
-
-
-
+    
+    
+    
     class Peer {
-
+    
         constructor(socket, request) {
             // set socket
             this.socket = socket;
-
-
+    
+    
             // set remote ip
             this._setIP(request);
-
+    
             // set peer id
             this._setPeerId(request)
             // is WebRTC supported ?
@@ -275,7 +257,7 @@ function main() {
             this.timerId = 0;
             this.lastBeat = Date.now();
         }
-
+    
         _setIP(request) {
             if (request.headers['x-forwarded-for']) {
                 this.ip = request.headers['x-forwarded-for'].split(/\s*,\s*/)[0];
@@ -287,7 +269,7 @@ function main() {
                 this.ip = '127.0.0.1';
             }
         }
-
+    
         _setPeerId(request) {
             if (request.peerId) {
                 this.id = request.peerId;
@@ -295,30 +277,30 @@ function main() {
                 this.id = request.headers.cookie.replace('peerid=', '');
             }
         }
-
+    
         toString() {
             return `<Peer id=${this.id} ip=${this.ip} rtcSupported=${this.rtcSupported}>`
         }
-
+    
         _setName(req) {
             let ua = parser(req.headers['user-agent']);
-
-
+    
+    
             let deviceName = '';
-
+    
             if (ua.os && ua.os.name) {
                 deviceName = ua.os.name.replace('Mac OS', 'Mac') + ' ';
             }
-
+    
             if (ua.device.model) {
                 deviceName += ua.device.model;
             } else {
                 deviceName += ua.browser.name;
             }
-
+    
             if (!deviceName)
                 deviceName = 'Unknown Device';
-
+    
             const displayName = uniqueNamesGenerator({
                 length: 3,
                 separator: ' ',
@@ -326,7 +308,7 @@ function main() {
                 style: 'capital',
                 seed: this.id.hashCode()
             })
-
+    
             this.name = {
                 model: ua.device.model,
                 os: ua.os.name,
@@ -336,7 +318,7 @@ function main() {
                 displayName
             };
         }
-
+    
         getInfo() {
             return {
                 id: this.id,
@@ -344,7 +326,7 @@ function main() {
                 rtcSupported: this.rtcSupported
             }
         }
-
+    
         // return uuid of form xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
         static uuid() {
             let uuid = '',
@@ -371,7 +353,7 @@ function main() {
             return uuid;
         };
     }
-
+    
     Object.defineProperty(String.prototype, 'hashCode', {
         value: function () {
             var hash = 0, i, chr;
