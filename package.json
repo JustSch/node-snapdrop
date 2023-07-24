@@ -27,7 +27,7 @@
     "@electron-forge/maker-squirrel": "^6.2.1",
     "@electron-forge/maker-zip": "^6.2.1",
     "@reforged/maker-appimage": "^3.3.0",
-    "electron": "^25.2.0"
+    "electron": "^25.3.1"
   },
   
   "overrides": {
